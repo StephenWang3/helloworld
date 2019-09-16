@@ -20,15 +20,58 @@ void get()
 	}
 }
 
-
+int getPriority(char ch)  
+{  
+    //获取优先级  
+    if (ch == '(') return 1;  
+    else if (ch == '+' || ch == '-') return 2;  
+    else if (ch == '*' || ch == '/') return 3;  
+    else return 4;  
+}  
+  
+void calculate(stack<double> &mystack, char operation)  
+{  
+    double num1, num2, num3;  
+    num2 = mystack.top();  
+    mystack.pop();  
+    num1 = mystack.top();  
+    mystack.pop();  
+    if (operation == '+') {  
+        num3 = num1 + num2;  
+    }  
+    else if (operation == '-') {  
+        num3 = num1 - num2;  
+    }  
+    else if (operation == '*') {  
+        num3 = num1 * num2;  
+    }  
+    else if (operation == '/') {  
+        num3 = num1 / num2;  
+    }  
+  
+    mystack.push(num3);  
+}  
 
 int main()
 {
+	double temp_num;
+	char temp_cmd;
 	get();
 	for (int i = 0; i < q.size(); ++i) {
 		if (isdigit(stoi(q[i]))) num.push(stoi(q[i]));
 		else if (q[i] == "+" || q[i] == "-" || q[i] == "*" || q[i] == "/") {
-			if (cmd.empty()) cmd.push(q[i]);
+			if (cmd.empty()) cmd.push(q[i][0]);
+			else{
+				while(!cmd.empty()){
+					temp_cmd = cmd.top();
+					if (getPriority(temp_cmd) >= getPriority(q[i][0])){
+						calculate(num, temp_cmd);
+						cmd.pop();
+					}
+					else break;
+				}
+				cmd.push(q[i][0]);
+			}
 		}
 	}
 }
