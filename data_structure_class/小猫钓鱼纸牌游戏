@@ -1,0 +1,119 @@
+#include <iostream>
+#include <stack>
+#include <queue>
+#include <vector>
+using namespace std;
+
+void play_game(queue<int> &A, queue<int> &B, stack<int> &table)
+{
+	bool flag = false;
+	int temp, f;
+	static vector<int> cnt, rev;
+
+	temp = A.front();
+	A.pop();
+	for (int i = 0; i < cnt.size(); i++)
+	{
+		if (cnt[i] == temp)
+		{
+			f = i;
+			flag = true;
+			int t = table.top();
+			if (t == temp)
+			{
+				rev.push_back(t);
+				table.pop();
+			}
+			else
+			{
+				rev.push_back(temp);
+				while (t != temp)
+				{
+					rev.push_back(t);
+					table.pop();
+					t = table.top();
+				}
+			}
+			rev.push_back(temp);
+		}
+	}
+	if (flag) for (int i = f; i < cnt.size(); i++) cnt[i] = -1;
+	else
+	{
+		cnt.push_back(temp);
+		table.push(temp);
+	}
+	for (int i = rev.size() - 1; i >= 0; i--)
+	{
+		A.push(rev[i]);
+	}
+	rev.clear();
+
+	flag = false;
+	temp = B.front();
+	B.pop();
+	for (int i = 0; i < cnt.size(); i++)
+	{
+		if (cnt[i] == temp)
+		{
+			f = i;
+			flag = true;
+			int t = table.top();
+			if (t == temp)
+			{
+				rev.push_back(t);
+				table.pop();
+			}
+			else
+			{
+				rev.push_back(temp);
+				while (t != temp)
+				{
+					rev.push_back(t);
+					table.pop();
+					t = table.top();
+				}
+			}
+			rev.push_back(temp);
+		}
+	}
+	if (flag) for (int i = f; i < cnt.size(); i++) cnt[i] = -1;
+	else
+	{
+		cnt.push_back(temp);
+		table.push(temp);
+	}
+	for (int i = rev.size() - 1; i >= 0; i--)
+	{
+		B.push(rev[i]);
+	}
+	rev.clear();
+}
+
+int main()
+{
+	int n, temp;
+	queue<int> A, B;
+	stack<int> table;
+	cout << "请输入每个人手里有几张牌:" << endl;
+	cin >> n;
+	cout << "请输入A手中的牌:" << endl;
+	for (int i = 0; i < n; i++)
+	{
+		cin >> temp;
+		A.push(temp);
+	}
+	cout << "请输入B手中的牌:" << endl;
+	for (int i = 0; i < n; i++)
+	{
+		cin >> temp;
+		B.push(temp);
+	}
+
+	while (!A.empty() && !B.empty())
+	{
+		play_game(A, B, table);
+	}
+	if (A.empty()) cout << "B赢了!" << endl;
+	else if (B.empty()) cout << "A赢了!" << endl;
+}
