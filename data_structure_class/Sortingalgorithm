@@ -1,0 +1,333 @@
+#include <iostream>
+#include <vector>
+#include <fstream>
+#include <cstdlib>
+#include <ctime>
+using namespace std;
+
+void creatRandomNum(vector<int> &vec, int n);
+void creatFile(const vector<int> &vec, const string &path);
+void InsertionSort(vector<int> &, int &, int &);
+int MinKey(const vector<int> &, int, int &);//返回最小元素的下表
+void SelectionSort(vector<int> &, int &, int &);
+void ShellInsertSort(vector<int> &, int , int&, int &);
+void ShellSort(vector<int> &, int &, int &);
+void MergeSort(vector<int> &, int &, int &);
+void QuickSort(vector<int> &, int &, int &);
+void HeapSort(vector<int> &, int &, int &);
+
+int main()
+{
+    vector<int> data1, data2, data3;//乱序
+    vector<int> pdata1, pdata2, pdata3;//正序
+    vector<int> rdata1, rdata2, rdata3;//逆序
+    creatRandomNum(rdata1, 20);
+    creatRandomNum(rdata2, 200);
+    creatRandomNum(rdata3, 2000);
+    data1 = rdata1;
+    data2 = rdata2;
+    data3 = rdata3;
+    sort(rdata1.begin(), rdata1.end());
+    sort(rdata2.begin(), rdata2.end());
+    sort(rdata3.begin(), rdata3.end());
+    pdata1 = rdata1;
+    pdata2 = rdata2;
+    pdata3 = rdata3;
+    reverse(rdata1.begin(), rdata1.end());
+    reverse(rdata2.begin(), rdata2.end());
+    reverse(rdata3.begin(), rdata3.end());
+    for (auto i : data1) cout << i << ' ';
+    cout << endl;
+    for (auto i : pdata1) cout << i << ' ';
+    cout << endl;
+    for (auto i : rdata1) cout << i << ' ';
+    cout << endl;
+
+    double t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18;
+    int cnt1, cnt2, cnt3, cnt4, cnt5, cnt6, cnt7, cnt8, cnt9, cnt10, cnt11, cnt12, cnt13, cnt14, cnt15, cnt16, cnt17, cnt18;
+    int snt1, snt2, snt3, snt4, snt5, snt6, snt7, snt8, snt9, snt10, snt11, snt12, snt13, snt14, snt15, snt16, snt17, snt18;
+
+    //插入排序
+    //乱序
+    clock_t start = clock();
+    InsertionSort(data3, cnt1, snt1);
+    clock_t end = clock();
+    t1 = (double)(end - start) / CLOCKS_PER_SEC;
+    //正序
+    start = clock();
+    InsertionSort(pdata3, cnt2, snt2);
+    end = clock();
+    t2 = (double)(end - start) / CLOCKS_PER_SEC;
+    //逆序
+    start = clock();
+    InsertionSort(rdata3, cnt3, snt3);
+    end = clock();
+    t3 = (double)(end - start) / CLOCKS_PER_SEC;
+
+    //选择排序
+    //乱序
+    start = clock();
+    SelectionSort(data1, cnt4, snt4);
+    end = clock();
+    t4 = (double)(end - start) / CLOCKS_PER_SEC;
+    cout << cnt1 << ' ' << cnt2 << ' ' << cnt3 << endl;
+    cout << snt1 << ' ' << snt2 << ' ' << snt3 << endl;
+    cout << t1 << ' ' << t2 << ' ' << t3 << endl;
+}
+
+void creatRandomNum(vector<int> &vec, int n)
+{
+    int temp;
+    unsigned seed;
+    seed = time(0);
+    srand(seed);
+
+    for (int i = 0; i < n; i++)
+    {
+        temp = rand() % 5000;
+        vec.push_back(temp);
+    }
+}
+
+void creatFile(const vector<int> &vec, const string &path)
+{
+    ofstream fp;
+    fp.open(path);
+    if (fp.good())
+    {
+        for (int i = 0; i < vec.size(); i++)
+        {
+            fp << vec[i] << ' ';
+        }
+    }
+    fp.close();
+}
+
+void InsertionSort(vector<int> &vec, int &cnt1, int &cnt2)
+{
+    cnt1 = 0;
+    cnt2 = 0;
+    for (int i = 1; i < vec.size(); i++)
+    {
+        cnt1++;
+        if (vec[i] < vec[i - 1])
+        {
+            cnt2++;
+            int temp = vec[i];
+            vec[i] = vec[i - 1];
+            int j = i - 1;
+            while (vec[j] > temp && j >= 0)
+            {
+                cnt1++;
+                cnt2++;
+                vec[j + 1] = vec[j];
+                j--;
+            }
+            vec[j + 1] = temp;
+        }
+    }
+}
+
+int MinKey(const vector<int> &vec, int n, int &cnt1)
+{
+    int k = n;
+    for (int i = n + 1; i < vec.size(); i++)
+    {
+        if (vec[i] < vec[k]) k = i;
+        cnt1++;
+    }
+    return k;
+}
+
+void SelectionSort(vector<int> &vec, int &cnt1, int &cnt2)
+{
+    cnt1 = 0;
+    cnt2 = 0;
+    int key;
+    for (int i = 0; i < vec.size(); i++)
+    {
+        key = MinKey(vec, i, cnt1);
+        swap(vec[i], vec[key]);
+        cnt2++;
+    }
+}
+
+void ShellInsertSort(vector<int> &vec, int dk, int &cnt1, int &cnt2)
+{
+    for (int i = dk; i < vec.size(); i++)
+    {
+        cnt1++;
+        if (vec[i] < vec[i - dk])
+        {
+            cnt2++;
+            int j = i - dk;
+            int temp = vec[i];
+            vec[i] = vec[i - dk];
+            while (j >=0 && temp < vec[j])
+            {
+                cnt1++;
+                cnt2++;
+                vec[j + dk] = vec[j];
+                j -= dk;
+            }
+            vec[j + dk] = temp;
+        }
+    }
+}
+
+void ShellSort(vector<int> &vec, int &cnt1, int &cnt2)
+{
+    int dk = vec.size() / 2;
+    while (dk >= 1)
+    {
+        ShellInsertSort(vec, dk, cnt1, cnt2);
+        dk /= 2;
+    }
+}
+
+void Merge(vector<int> &vec, int L, int mid, int R, int &cnt1, int &cnt2)
+{
+    vector<int> res;
+    int i, j;
+    for (i = L, j = mid + 1; i <= mid && j <= R;)
+    {
+        cnt1++;
+        if (vec[i] <= vec[j]) {
+            cnt2++;
+            res.push_back(vec[i]);
+            i++;
+        }
+        else {
+            cnt2++;
+            res.push_back(vec[j]);
+            j++;
+        }
+    }
+    if (i <= mid) {
+        for (; i <= mid; i++) {
+            cnt2++;
+            res.push_back(vec[i]);
+        }
+    }
+    else if (j <= R) {
+        for (; j <= R; j++) {
+            cnt2++;
+            res.push_back(vec[j]);
+        }
+    }
+    for (i = 0; i < res.size(); i++)
+    {
+        vec[L + i] = res[i];
+    }
+}
+
+void MS(vector<int> &vec, int L, int R, int &cnt1, int &cnt2)
+{
+    if (L == R) return;
+    int mid = L + ((R - L) / 2);
+    MS(vec, L, mid, cnt1, cnt2);
+    MS(vec, mid + 1, R, cnt1, cnt2);
+    Merge(vec, L, mid, R, cnt1, cnt2);
+}
+
+void MergeSort(vector<int> &vec, int &cnt1, int &cnt2)
+{
+    MS(vec, 0, vec.size() - 1, cnt1, cnt2);
+}
+
+int partition(vector<int> &vec, int L, int R, int &cnt1, int &cnt2)
+{
+    int flag = vec[L];
+    while (L < R)
+    {
+        while(L < R && vec[R] > flag){
+            R--;
+            cnt1++;
+        }
+        swap(vec[L], vec[R]);
+        cnt2++;
+        while(L < R && vec[L] < flag) {
+            L++;
+            cnt1++;
+        }
+        swap(vec[L], vec[R]);
+        cnt2++;
+    }
+    return L;
+}
+
+void QS(vector<int> &vec, int L, int R, int &cnt1, int &cnt2)
+{
+    if (L < R)
+    {
+        int mid = partition(vec, L, R, cnt1, cnt2);
+        QS(vec, L, mid - 1, cnt1, cnt2);
+        QS(vec, mid + 1, R, cnt1, cnt2);
+    }
+}
+
+void QuickSort(vector<int> &vec, int &cnt1, int &cnt2)
+{
+    QS(vec, 0, vec.size() - 1, cnt1, cnt2);
+}
+
+void HeapAdjust(vector<int> &vec, int s, int l, int &cnt1, int &cnt2)
+{
+    int temp = vec[s];
+    int child = 2 * s + 1;
+    while (child < l)
+    {
+        cnt1++;
+        if (child + 1 < l && vec[child] < vec[child + 1]) child++;
+        cnt1++;
+        if (vec[s] < vec[child])
+        {
+            vec[s] = vec[child];
+            s = child;
+            child = 2 * s + 1;
+        }
+        else break;
+        cnt2++;
+        vec[s] = temp;
+    }
+}
+
+void BuildHeap(vector<int> &vec, int l, int &cnt1, int &cnt2)
+{
+    for (int i = (l - 1) / 2; i >= 0; i--)
+    {
+        HeapAdjust(vec, i, l, cnt1, cnt2);
+    }
+}
+
+void HeapSort(vector<int> &vec, int &cnt1, int &cnt2)
+{
+    int l = vec.size();
+    BuildHeap(vec, l, cnt1, cnt2);
+    for (int i = l - 1; i > 0; i--)
+    {
+        cnt2++;
+        swap(vec[i], vec[0]);
+        HeapAdjust(vec, 0, i, cnt1, cnt2);
+    }
+}
+
+/*
+int main()
+{
+    int cnt1 = 0, cnt2 = 0;
+    vector<int> v;
+    v.clear();
+    v.push_back(5);
+    v.push_back(1);
+    v.push_back(3);
+    v.push_back(2);
+    v.push_back(4);
+    v.push_back(0);
+    HeapSort(v, cnt1, cnt2);
+    for (auto i : v)
+        cout << i << ' ';
+    cout << endl;
+    cout << cnt1 << endl << cnt2 << endl;
+}
+*/
